@@ -1,5 +1,5 @@
 # Dockerfile
-FROM openjdk:8-jdk-alpine
+FROM openjdk:17-jdk-slim
 VOLUME /tmp
 COPY target/kaddem-0.0.1.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
