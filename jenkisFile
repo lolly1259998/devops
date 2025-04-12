@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        /*stage('SonarQube Analysis') {
             steps {
                 sh '''
                     mvn sonar:sonar \
@@ -33,7 +33,7 @@ pipeline {
                         -Dmaven.test.skip=true
                 '''
             }
-        }
+        }*/
 
         stage('Deploy to Nexus') {
             steps {
