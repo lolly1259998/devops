@@ -1,17 +1,18 @@
 pipeline {
     agent any
 
-    tools { 
-        jdk 'JAVA_HOME' 
-        maven 'M2_HOME' 
+    tools {
+        jdk 'JAVA_HOME'
+        maven 'M2_HOME'
     }
 
     environment {
         DB_URL = 'jdbc:mysql://localhost:3306/db'
         NEXUS_REPO_URL = "http://127.0.0.1:8081/repository/maven-releases/"
         MAVEN_SETTINGS = "/usr/share/maven/conf/settings.xml"
+        DOCKER_IMAGE_NAME = "hadilbouhachem/kaddem-app:latest"
     }
-    
+
     stages {
         stage('Git Checkout') {
             steps {
@@ -25,41 +26,76 @@ pipeline {
             }
         }
 
-        /*stage('SonarQube Analysis') {
+        stage('Docker Login') {
             steps {
-                sh '''
-                    mvn sonar:sonar \
-                        -Dsonar.token=squ_186107db379329e447e8d1a34c132010eeb8c8c4 \
-                        -Dmaven.test.skip=true
-                '''
-            }
-        }*/
-
-       /*stage('Deploy to Nexus') {
-            steps {
-                sh 'mvn deploy -DskipTests --settings /usr/share/maven/conf/settings.xml'
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        sh '''
+                            echo "Logging into Docker Hub..."
+                            echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+                        '''
+                    }
+                }
             }
         }
-    }*/
 
-stage('Docker Compose') {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            # Naviguer vers le répertoire contenant le Dockerfile
+                            cd kaddem/kaddem
+
+                            # Construire l'image Docker
+                            docker build -t kaddem-app:1.0.0 .
+                        '''
+                    } catch (Exception e) {
+                        echo "Failed to build Docker image: ${e.message}"
+                        throw e
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            echo "Tagging Docker image..."
+                            docker tag kaddem-app:1.0.0 ${DOCKER_IMAGE_NAME}
+
+                            echo "Pushing Docker image to Docker Hub..."
+                            docker push ${DOCKER_IMAGE_NAME}
+                        '''
+                    } catch (Exception e) {
+                        echo "Failed to push Docker image to Docker Hub: ${e.message}"
+                        throw e
+                    }
+                }
+            }
+        }
+
+        stage('Docker Compose') {
             steps {
                 script {
                     try {
                         sh '''
                             cd kaddem/kaddem
-                            sudo docker-compose down
-                            sudo docker-compose build
-                            sudo docker-compose up -d
-                            sudo docker-compose ps
+                            docker-compose down || true
+                            docker-compose build
+                            docker-compose up -d
+                            docker-compose ps
                         '''
                     } catch (Exception e) {
                         echo "Docker Compose failed: ${e.message}"
-                        throw e // Rethrow to fail the pipeline if Docker Compose fails
+                        throw e
                     }
                 }
             }
         }
+    }
 
     post {
         success {
