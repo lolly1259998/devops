@@ -34,5 +34,18 @@ stage('SonarQube Analysis') {
                 sh 'mvn sonar:sonar -Dsonar.token=squ_186107db379329e447e8d1a34c132010eeb8c8c4 -Dmaven.test.skip=true'
             }
         }
+stage('Deploy to Nexus') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            mvn deploy --settings ${MAVEN_SETTINGS} -DskipTests
+                        '''
+                    } catch (Exception e) {
+                        echo "Deployment to Nexus failed: ${e.message}"
+                        throw e // Rethrow to fail the pipeline if deployment fails
+                    }
+                }
             }
         }
+    }
