@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DB_URL = 'jdbc:mysql://localhost:3306/stationSki'
+        DB_URL = 'jdbc:mysql://localhost:3306/db'
         NEXUS_REPO_URL = "http://127.0.0.1:8081/repository/maven-releases/"
         MAVEN_SETTINGS = "/usr/share/maven/conf/settings.xml"
     }
