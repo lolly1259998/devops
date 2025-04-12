@@ -10,7 +10,7 @@ pipeline {
         DB_URL = 'jdbc:mysql://localhost:3306/db'
         NEXUS_REPO_URL = "http://127.0.0.1:8081/repository/maven-releases/"
         MAVEN_SETTINGS = "/usr/share/maven/conf/settings.xml"
-        DOCKER_IMAGE_NAME = "hadilbouhachem/kaddem-app:latest"
+        DOCKER_IMAGE_NAME = "hadilbouhachem12/kaddem-app:latest"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
     }
 
