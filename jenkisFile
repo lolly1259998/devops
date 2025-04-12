@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    tools { 
+        jdk 'JAVA_HOME' 
+        maven 'M2_HOME' 
+    }
+
+    environment {
+        DB_URL = 'jdbc:mysql://localhost:3306/stationSki'
+        NEXUS_REPO_URL = "http://127.0.0.1:8081/repository/maven-releases/"
+        MAVEN_SETTINGS = "/usr/share/maven/conf/settings.xml"
+    }
+    
+   
+    stages {
+        stage('GIT') {
+            steps {
+                git branch: 'hadil', url: 'https://github.com/lolly1259998/devops.git'
+            }
+        }
+
+       
+
+        stage('Compile Stage') {
+            steps {
+                sh 'mvn clean install -DskipTests'
+            }
+        }
+
+
+            }
+        }
