@@ -35,12 +35,12 @@ pipeline {
             }
         }*/
 
-       stage('Deploy to Nexus') {
+       /*stage('Deploy to Nexus') {
             steps {
                 sh 'mvn deploy -DskipTests --settings /usr/share/maven/conf/settings.xml'
             }
         }
-    }
+    }*/
 
     post {
         success {
