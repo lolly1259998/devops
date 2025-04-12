@@ -25,9 +25,14 @@ pipeline {
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean install -DskipTests'
+
             }
         }
 
-
+stage('SonarQube Analysis') {
+            steps {
+                sh 'mvn sonar:sonar -Dsonar.token=squ_186107db379329e447e8d1a34c132010eeb8c8c4 -Dmaven.test.skip=true'
+            }
+        }
             }
         }
