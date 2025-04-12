@@ -12,29 +12,30 @@ pipeline {
         MAVEN_SETTINGS = "/usr/share/maven/conf/settings.xml"
     }
     
-   
     stages {
-        stage('GIT') {
+        stage('Git Checkout') {
             steps {
                 git branch: 'hadil', url: 'https://github.com/lolly1259998/devops.git'
             }
         }
 
-       
-
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean install -DskipTests'
-
             }
         }
 
-stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
-                sh 'mvn sonar:sonar -Dsonar.token=squ_186107db379329e447e8d1a34c132010eeb8c8c4 -Dmaven.test.skip=true'
+                sh '''
+                    mvn sonar:sonar \
+                        -Dsonar.token=squ_186107db379329e447e8d1a34c132010eeb8c8c4 \
+                        -Dmaven.test.skip=true
+                '''
             }
         }
-stage('Deploy to Nexus') {
+
+        stage('Deploy to Nexus') {
             steps {
                 script {
                     try {
@@ -49,3 +50,13 @@ stage('Deploy to Nexus') {
             }
         }
     }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed. Please check the logs for details."
+        }
+    }
+}
