@@ -28,14 +28,14 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+       /* stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
                 sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_IMAGE_NAME}:latest"
             }
-        }
+        }*/
 
-        stage('Push Docker Image to Docker Hub') {
+       /* stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
                     try {
@@ -52,9 +52,9 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
-        stage('Docker Compose') {
+       /* stage('Docker Compose') {
             steps {
                 script {
                     try {
@@ -71,7 +71,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Testing') {
             steps {
