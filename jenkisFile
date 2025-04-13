@@ -22,7 +22,13 @@ pipeline {
             }
         }
 
-stage('Testing') {
+        stage('Compile Stage') {
+            steps {
+                sh 'mvn clean install -DskipTests'
+            }
+        }
+
+        stage('Testing') {
             steps {
                 script {
                     try {
@@ -32,26 +38,23 @@ stage('Testing') {
                         '''
                     } catch (Exception e) {
                         echo "Tests failed: ${e.message}"
-                        // Do not rethrow to allow pipeline to continue
+                        // Ne pas relancer l'exception pour permettre au pipeline de continuer
                     }
                 }
             }
         }
-    }
-        stage('Compile Stage') {
-            steps {
-                sh 'mvn clean install -DskipTests'
-            }
-        }
 
-        /*stage('Build Docker Image') {
+        /*
+        stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
                 sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_IMAGE_NAME}:latest"
             }
-        }*/
+        }
+        */
 
-       /* stage('Push Docker Image to Docker Hub') {
+        /*
+        stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
                     try {
@@ -68,9 +71,11 @@ stage('Testing') {
                     }
                 }
             }
-        }*/
+        }
+        */
 
-       /* stage('Docker Compose') {
+        /*
+        stage('Docker Compose') {
             steps {
                 script {
                     try {
@@ -87,9 +92,9 @@ stage('Testing') {
                     }
                 }
             }
-        }*/
-
- }       
+        }
+        */
+    }
 
     post {
         success {
