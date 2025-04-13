@@ -1,5 +1,5 @@
 # Dockerfile
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-alpine
 VOLUME /tmp
 COPY target/kaddem-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8089
