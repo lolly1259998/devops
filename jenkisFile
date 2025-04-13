@@ -28,32 +28,7 @@ pipeline {
             }
         }
 
-      
-/*stage('Docker Login') {
-            steps {
-                sh 'echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin'
-            }
-        }
-
         stage('Build Docker Image') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                            # Naviguer vers le répertoire contenant le Dockerfile
-                            cd kaddem/kaddem
-
-                            # Construire l'image Docker
-                            docker build -t kaddem-app:1.0.0 .
-                        '''
-                    } catch (Exception e) {
-                        echo "Failed to build Docker image: ${e.message}"
-                        throw e
-                    }
-                }
-            }
-        }*/
-stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
                 sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_IMAGE_NAME}:latest"
@@ -97,9 +72,9 @@ stage('Build Docker Image') {
                 }
             }
         }
-    }
 
- stage('Testing') {
+        ### ✅ CORRECT POSITION ###
+        stage('Testing') {
             steps {
                 script {
                     try {
@@ -114,6 +89,7 @@ stage('Build Docker Image') {
                 }
             }
         }
+    }
 
     post {
         success {
