@@ -22,18 +22,34 @@ pipeline {
             }
         }
 
+stage('Testing') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            cd kaddem/kaddem
+                            mvn test
+                        '''
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.message}"
+                        // Do not rethrow to allow pipeline to continue
+                    }
+                }
+            }
+        }
+    }
         stage('Compile Stage') {
             steps {
                 sh 'mvn clean install -DskipTests'
             }
         }
 
-        stage('Build Docker Image') {
+        /*stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
                 sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_IMAGE_NAME}:latest"
             }
-        }
+        }*/
 
        /* stage('Push Docker Image to Docker Hub') {
             steps {
@@ -73,22 +89,7 @@ pipeline {
             }
         }*/
 
-        stage('Testing') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                            cd kaddem/kaddem
-                            mvn test
-                        '''
-                    } catch (Exception e) {
-                        echo "Tests failed: ${e.message}"
-                        // Do not rethrow to allow pipeline to continue
-                    }
-                }
-            }
-        }
-    }
+        
 
     post {
         success {
